@@ -12,19 +12,32 @@ public class linkedList {
             System.out.println("ACTIONS:\n\t1. Create a new linked list.");
             System.out.println("\t2. Add an element to the list.");
             System.out.println("\t3. Print all the elements of the list.");
-            System.out.print("\nPlease choose an action from above (1-3): ");
+            System.out.println("\t4. Quit (or type 'quit')");
+            System.out.print("\nPlease choose an action from above (1-4): ");
 
             message = scanner.nextLine();
+            String choice = message.trim();
 
-            if (message.trim().equalsIgnoreCase("1")) {
+            if (choice.equalsIgnoreCase("1")) {
                 linked_list = new Node[0];
                 Node.startingIndex = -1;
-            } else if (message.trim().equalsIgnoreCase("2")) {
-                System.out.print("Enter the element: ");
-                float num = scanner.nextFloat();
-                linked_list = addElement(num, linked_list);
-            } else if (message.trim().equalsIgnoreCase("3")) {
+                System.out.println("New empty linked list created.");
+            } else if (choice.equalsIgnoreCase("2")) {
+                System.out.print("Enter the element (number): ");
+                String value = scanner.nextLine().trim();
+                try {
+                    float num = Float.parseFloat(value);
+                    linked_list = addElement(num, linked_list);
+                    System.out.println(num + " added to the list.");
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Invalid number entered. Please try again.");
+                }
+            } else if (choice.equalsIgnoreCase("3")) {
                 printLinkedList(linked_list);
+            } else if (choice.equalsIgnoreCase("4") || choice.equalsIgnoreCase("quit")) {
+                break;
+            } else {
+                System.out.println("Invalid choice. Please enter 1, 2, 3 or 4 (or type 'quit').");
             }
         }
 
@@ -33,13 +46,29 @@ public class linkedList {
     }
 
     public static void printLinkedList(Node[] ll) {
-        int i = Node.startingIndex;
         System.out.println("\nLinked List:");
+        if (ll == null || ll.length == 0 || Node.startingIndex == -1) {
+            System.out.println("<empty>");
+            System.out.println();
+            return;
+        }
+
+        int i = Node.startingIndex;
+        int safety = 0; // avoid infinite loops in case of corrupted nextIndex
         while (i != -1) {
+            if (i < 0 || i >= ll.length) {
+                System.out.println("[error] invalid node index: " + i);
+                break;
+            }
             System.out.println(ll[i].data);
             i = ll[i].nextIndex;
+            safety++;
+            if (safety > ll.length + 5) { // simple loop detection
+                System.out.println("[error] possible cycle detected in list, aborting print.");
+                break;
+            }
         }
-        System.out.println("\n");
+        System.out.println();
     }
 
     // To add elements to the linked list
