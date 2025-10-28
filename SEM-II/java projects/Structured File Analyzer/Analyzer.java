@@ -9,32 +9,70 @@ ASSUMPTIONS:
  - I am assuming that the files will always contain the final two fields which will have the qty and the price of the products.
  - Also that the date field would include a "date" title.
  - And that the date would be formatted as "XX-MONTH-XX" and the user would want the answer month wise.
- - Only .tab, .csv, and .txt files are allowed
 
  */
 
 public class Analyzer {
     public static void main(String[] args) {
-        System.out.print("Please give the file path: ");
+        String path = "sales.tab";
         Scanner scanner = new Scanner(System.in);
-        String path = scanner.nextLine();
 
         try {
+            // Creating the file object and the file reader
             File dataFile = new File(path);
             Scanner read = new Scanner(dataFile);
-            String ext = giveFileExt(path);
 
-            if (ext.equalsIgnoreCase("tab") || ext.equalsIgnoreCase("csv")) {
+            // TASK: 1 Total Sales Amount
+            double totAmount = giveSalesTotal(read, "\t");
+            System.out.println("Total Sales Amount: " + totAmount);
 
-                String regExt = "";
-                if (ext.equals("csv")) {
-                    regExt = ",";
-                } else {
-                    regExt = "\t";
-                }
+
+            // TASK: 2 Employee-wise Sales Amount
+            read = new Scanner(dataFile);
+
+            HashMap<String, Double> empTot = filteredTotal(read, 2, "\t");
+
+            System.out.print("\nEMPLOYEE WISE ");
+            printMapData(empTot);
+
+
+            // TASK: 3 Product-wise Sales Amount
+            read = new Scanner(dataFile);
+
+            HashMap<String, Double> prodTot = filteredTotal(read, 3, "\t");
+
+            System.out.print("\nPRODUCT WISE ");
+            printMapData(prodTot);
+
+
+            // TASK: 4 Region-wise Sales Amount
+            read = new Scanner(dataFile);
+
+            HashMap<String, Double> regTot = filteredTotal(read, 1, "\t");
+
+            System.out.print("\nREGION WISE ");
+            printMapData(regTot);
+
+
+            // TASK: 5 Month-wise Sales Amount
+            read = new Scanner(dataFile);
+
+            HashMap<String, Double> monthTot = filterDatewiseTotal(read, 0, "\t");
+
+            System.out.print("\nMONTH WISE ");
+            printMapData(monthTot);
+
+            System.out.print("Please give the file path: ");
+            String filePath = scanner.nextLine();
+
+
+            // CHALLENGE: Auto-generation of menu options and generic manipulation
+            try {
+                File file = new File(filePath);
+                read = new Scanner(file);
 
                 String fieldHead = read.nextLine();
-                String fieldHeads[] = fieldHead.split(regExt);
+                String fieldHeads[] = fieldHead.split("\t");
 
                 System.out.println("\nYour data contains the following fields:");
                 for (int i = 0; i < (fieldHeads.length - 2); i++) {
@@ -43,74 +81,72 @@ public class Analyzer {
                 System.out.print("Please select a field to filter the data with (0-" + (fieldHeads.length - 3) + "): ");
 
                 int fieldI = scanner.nextInt();
+                
+                System.out.print("\n");
 
                 if (fieldHeads[fieldI].equalsIgnoreCase("date")) {
-                    HashMap<String, Double> data = filterDatewiseTotal(read, fieldI, regExt);
+                    HashMap<String, Double> data = filterDatewiseTotal(read, fieldI, "\t");
                     printMapData(data);
 
                 } else {
-                    HashMap<String, Double> data = filteredTotal(read, fieldI, regExt);
+                    HashMap<String, Double> data = filteredTotal(read, fieldI, "\t");
                     printMapData(data);
 
                 }
-            } else {
-                System.out.println("File format not supported!");
+            } catch (FileNotFoundException fnfe) {
+                System.out.println("No file found at \"" + filePath + "\"");
             }
 
         } catch (FileNotFoundException fnfe) {
             System.out.println("No file found at \"" + path + "\"");
         }
-        scanner.close();
 
+        scanner.close();
     }
 
-    public static String giveFileExt(String path) {
-        if (path == null || path.isEmpty()) {
-            return "";
+    public static double giveSalesTotal(Scanner fileReader, String regExt) {
+        double total = 0;
+        fileReader.nextLine();
+
+        while (fileReader.hasNextLine()) {
+            String[] fields = fileReader.nextLine().split(regExt);
+            int qty = Integer.parseInt(fields[(fields.length - 2)]);
+            double price = Double.parseDouble(fields[(fields.length - 1)]);
+            total += qty * price;
         }
 
-        File f = new File(path);
-        String name = f.getName();
-
-        int lastDot = name.lastIndexOf('.');
-        if (lastDot == -1 || lastDot == name.length() - 1) {
-            return "";
-        }
-
-        return name.substring(lastDot + 1);
+        return total;
     }
 
     public static void printMapData(HashMap<String, Double> data) {
-        double total = 0;
-        System.out.println("\n");
         System.out.println("FILTERED DATA:");
         for (HashMap.Entry<String, Double> entry : data.entrySet()) {
             String name = entry.getKey();
             Double sales = entry.getValue();
-            total += sales;
             System.out.println(name + ":\t" + sales);
         }
-        System.out.println("\nTotal:\t" + total);
     }
 
     public static HashMap<String, Double> filterDatewiseTotal(Scanner fileReader, int fieldInd, String regExt) {
         HashMap<String, Double> data = new HashMap<>();
+        fileReader.nextLine();
 
         while (fileReader.hasNextLine()) {
             String line = fileReader.nextLine();
             String[] fields = line.split(regExt);
+
             String filter = fields[fieldInd].split("-")[1];
 
             if (data.containsKey(filter)) {
                 double am = data.get(filter);
                 double price = Double.parseDouble(fields[fields.length - 1]);
                 int qty = Integer.parseInt(fields[fields.length - 2]);
-                am += price - qty;
+                am += price * qty;
                 data.replace(filter, am);
             } else {
                 double price = Double.parseDouble(fields[fields.length - 1]);
                 int qty = Integer.parseInt(fields[fields.length - 2]);
-                double am = price - qty;
+                double am = price * qty;
                 data.put(filter, am);
             }
         }
@@ -127,15 +163,17 @@ public class Analyzer {
             String[] fields = line.split(regExt);
 
             if (data.containsKey(fields[fieldInd])) {
+
                 double am = data.get(fields[fieldInd]);
                 double price = Double.parseDouble(fields[fields.length - 1]);
                 int qty = Integer.parseInt(fields[fields.length - 2]);
-                am += price - qty;
+                am += price * qty;
                 data.replace(fields[fieldInd], am);
+
             } else {
                 double price = Double.parseDouble(fields[fields.length - 1]);
                 int qty = Integer.parseInt(fields[fields.length - 2]);
-                double am = price - qty;
+                double am = price * qty;
                 data.put(fields[fieldInd], am);
             }
         }
