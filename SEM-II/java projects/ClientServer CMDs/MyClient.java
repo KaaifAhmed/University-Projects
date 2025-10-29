@@ -10,6 +10,7 @@ public class MyClient {
 
         Client client = new Client("localhost", 9090);
         System.out.println(client.connectServer());
+        client.sendRequest("Client speaking...");
 
         // Setting up client's reader
         Scanner reader = new Scanner(System.in);

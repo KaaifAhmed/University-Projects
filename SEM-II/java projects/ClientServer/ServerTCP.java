@@ -22,7 +22,7 @@ public class ServerTCP {
             
             String request = "";
 
-            while (!(request.equals("quit"))) {
+            while (!(request.equalsIgnoreCase("quit"))) {
                 request = dis.readUTF();
                 System.out.println("Client: " + request);
     

@@ -78,7 +78,7 @@ class EbookInfo extends BookInfo {
             reader.close();
 
         } catch (Exception e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
     }
 

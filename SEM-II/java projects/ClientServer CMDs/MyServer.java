@@ -40,7 +40,6 @@ public class MyServer {
 
         // GET command handling
         else if (command.contains("get")) {
-            System.out.println(command);
             res = getFile(req);
         }
 
@@ -85,7 +84,7 @@ public class MyServer {
 
     // Returns the list of file names from the current directory
     public static String listFileNames() {
-        String directoryPath = "C:\\Users\\Abdullah\\Documents\\GitHub\\University-Projects\\SEM-II\\java projects\\ClientServer CMDs"; // Current directory
+        String directoryPath = "C:/Users/Abdullah/CLionProjects/java projects"; // Current directory
         File directory = new File(directoryPath);
         String output = "";
 
@@ -117,10 +116,9 @@ public class MyServer {
     // Returns the desired file as a string object
     public static String getFile(String msg) {
         msg = msg.replace("get ", "");
-        System.out.println(msg);
         String filename = msg;
         try {
-            File file = new File("ClientServer\\" + filename);
+            File file = new File(filename);
 
             if (!(file.exists())) {
                 return "File does not exist!";
