@@ -1,8 +1,6 @@
-
 import clientservercomm.*;
 import java.util.*;
 import java.io.File;
-// import java.net.*;
 
 public class MyServer {
     public static void main(String[] args) {

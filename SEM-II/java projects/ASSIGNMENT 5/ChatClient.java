@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-// import clientservercomm.*;
 
 public class ChatClient {
     public static void main(String[] args) {
@@ -16,7 +15,6 @@ public class ChatClient {
         PrintWriter servWriter;
         Scanner scanner = new Scanner(System.in);
 
-        // String message = "";
 
         try {
             clientSocket = new Socket(ipAddress, port);
@@ -32,17 +30,26 @@ public class ChatClient {
             System.out.println(msg);
             clientMsgs clientMsgs = new clientMsgs(servReader);
             clientMsgs.start();
-            String chatMessage = scanner.nextLine();
 
-
-            while (!((chatMessage.toLowerCase().trim()).equals("quit"))) {
+            
+            while (true) {
+                String chatMessage = scanner.nextLine();
+                if (chatMessage == null) {
+                    break;
+                }
                 servWriter.println(chatMessage);
-                chatMessage = scanner.nextLine();
+                if (chatMessage.equalsIgnoreCase("quit")) {
+                    break;
+                }
             }
 
-            System.out.println("Chat server ended!");
+            System.out.println("Disconnecting from chat server...");
 
-            clientSocket.close();
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                // ignore close errors
+            }
             scanner.close();
         } catch (Exception e) {
             System.out.println(e.toString());
@@ -60,13 +67,13 @@ class clientMsgs extends Thread {
 
     @Override
     public void run() {
-        while (true) {
-            try {
-                System.out.println(servReader.readLine());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+        try {
+            String line;
+            while ((line = servReader.readLine()) != null) {
+                System.out.println(line);
             }
+        } catch (IOException e) {
+            System.out.println("Connection to server lost.");
         }
     }
 }

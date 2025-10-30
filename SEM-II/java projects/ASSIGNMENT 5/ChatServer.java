@@ -6,7 +6,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-// import clientservercomm.*;
 
 public class ChatServer {
     public static ArrayList<PrintWriter> cliePrintWriters = new ArrayList<PrintWriter>();
@@ -61,27 +60,53 @@ class handleClients extends Thread {
     public void run() {
 
         System.out.println("Client connected successfully!");
-        String chatMessage;
+        String chatMessage = null;
+        String username = null;
         try {
             clientWriter.println("Please enter your username: ");
-            String username = clientReader.readLine();
+            username = clientReader.readLine();
+
+            if (username == null) {
+                System.out.println("Client closed connection before providing a username.");
+                return;
+            }
             System.out.println("Hello " + username + "! Welcome to our chat server!");
             clientWriter.println("Hello " + username + "! Welcome to our chat server!");
 
-            chatMessage = clientReader.readLine();
 
-            while (!(chatMessage.toLowerCase().trim()).equals("quit")) {
+            while (true) {
+                chatMessage = clientReader.readLine();
+                if (chatMessage == null) {
+                    // client disconnected abruptly
+                    System.out.println("Client " + username + " disconnected (socket closed).");
+                    break;
+                }
+                if (chatMessage.equalsIgnoreCase("quit")) {
+                    // client requested to quit
+                    System.out.println("Client " + username + " requested to quit.");
+                    break;
+                }
+
                 for (PrintWriter writer : ChatServer.cliePrintWriters) {
                     writer.println(username + ": " + chatMessage);
                 }
-                chatMessage = clientReader.readLine();
             }
 
-            System.out.println("Client disconnected!");
-            clientSocket.close();
-
         } catch (Exception e) {
-            System.out.println(e.toString());
+            System.out.println("Error handling client" + (username != null ? " (" + username + ")" : "") + ": " + e.toString());
+        } finally {
+            // ensure writer is removed and socket is closed
+            try {
+                ChatServer.cliePrintWriters.remove(clientWriter);
+            } catch (Exception ignore) {
+            }
+            try {
+                if (clientSocket != null && !clientSocket.isClosed()) {
+                    clientSocket.close();
+                }
+            } catch (IOException ignore) {
+            }
+            System.out.println("Cleanup done for client" + (username != null ? (" " + username) : "") + ".");
         }
     }
 }

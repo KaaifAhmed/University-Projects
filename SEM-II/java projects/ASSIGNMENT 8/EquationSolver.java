@@ -25,8 +25,12 @@ public class EquationSolver {
 
     }
 
+    // public static double f(double x) {
+    //     return 2 * Math.pow(x, 3) - 250;
+    // }
+
     public static double f(double x) {
-        return 2 * Math.pow(x, 3) - 250;
+        return 3 * Math.pow(x, 3) - 24;
     }
 
     public static boolean correctLimits(double a, double b) {
