@@ -22,6 +22,7 @@ public class ChatClient {
             servWriter = new PrintWriter(clientSocket.getOutputStream(), true);
             System.out.println("Client connected to Chat Server (" + ipAddress + ":" + port + ") successfully");
 
+            // I/O ACCORDING TO OUR PROTOCOLS 
             String msg = servReader.readLine();
             System.out.print(msg);
             String username = scanner.nextLine();

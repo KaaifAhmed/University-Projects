@@ -25,7 +25,6 @@ class Circle implements Shape {
 class Rectangle implements Shape {
     double l;
     double b;
-    private final double PI = 3.142;
 
     Rectangle (double l, double b) {
         this.l = l;

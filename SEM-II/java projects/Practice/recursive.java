@@ -49,6 +49,8 @@ public class recursive {
         int[] arr = {5,6,2,5,1,3,34,98,1,2,65};
         System.out.println("The max value is: " + maxVal(arr, 0, 0));
 
+        scanner.close();
+
     }
 
     public static int fibonacci (int n) {

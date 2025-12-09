@@ -1,11 +1,11 @@
-class LinkedList <T> {
+class LinkedList<T> {
     private T arr[];
 
-    LinkedList (T array[]) {
+    LinkedList(T array[]) {
         arr = array.clone();
     }
 
-    public void printList () {
+    public void printList() {
         for (T t : arr) {
             System.out.println(t);
         }
@@ -14,8 +14,8 @@ class LinkedList <T> {
 
 public class generics {
     public static void main(String[] args) {
-        Integer[] arr = {1,2,3,4};
-        LinkedList<Integer> li = new LinkedList<Integer>(arr);
+        Double[] arr = { 1.3, 2.4, 3.22, 4.5 };
+        LinkedList<Double> li = new LinkedList<>(arr);
         li.printList();
     }
 }

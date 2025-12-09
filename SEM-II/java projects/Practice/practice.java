@@ -4,6 +4,7 @@ public class practice {
     public static String input(String prompt) {
         System.out.print(prompt);
         Scanner scanner = new Scanner(System.in);
+        scanner.close();
         return scanner.nextLine();
     }
 

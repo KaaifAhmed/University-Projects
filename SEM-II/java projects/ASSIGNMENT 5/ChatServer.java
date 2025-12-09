@@ -6,9 +6,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-
 public class ChatServer {
-    public static ArrayList<PrintWriter> cliePrintWriters = new ArrayList<PrintWriter>();
+    public static ArrayList<PrintWriter> clientPrintWriters = new ArrayList<PrintWriter>();
 
     public static void main(String[] args) {
         ServerSocket serverSocket;
@@ -48,9 +47,9 @@ class handleClients extends Thread {
             clientSocket = socket;
             clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             clientWriter = new PrintWriter(clientSocket.getOutputStream(), true);
-            ChatServer.cliePrintWriters.add(clientWriter);
-        } 
-        
+            ChatServer.clientPrintWriters.add(clientWriter);
+        }
+
         catch (Exception e) {
             System.out.println(e.toString());
         }
@@ -73,7 +72,6 @@ class handleClients extends Thread {
             System.out.println("Hello " + username + "! Welcome to our chat server!");
             clientWriter.println("Hello " + username + "! Welcome to our chat server!");
 
-
             while (true) {
                 chatMessage = clientReader.readLine();
                 if (chatMessage == null) {
@@ -87,17 +85,20 @@ class handleClients extends Thread {
                     break;
                 }
 
-                for (PrintWriter writer : ChatServer.cliePrintWriters) {
-                    writer.println(username + ": " + chatMessage);
+                for (PrintWriter writer : ChatServer.clientPrintWriters) {
+                    if (!(writer.equals(clientWriter))) {
+                        writer.println(username + ": " + chatMessage);
+                    }
                 }
             }
 
         } catch (Exception e) {
-            System.out.println("Error handling client" + (username != null ? " (" + username + ")" : "") + ": " + e.toString());
+            System.out.println(
+                    "Error handling client" + (username != null ? " (" + username + ")" : "") + ": " + e.toString());
         } finally {
             // ensure writer is removed and socket is closed
             try {
-                ChatServer.cliePrintWriters.remove(clientWriter);
+                ChatServer.clientPrintWriters.remove(clientWriter);
             } catch (Exception ignore) {
             }
             try {

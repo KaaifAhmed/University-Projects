@@ -53,6 +53,8 @@ public class lambdaPrac {
             
         };
 
+        c.giveCoolness(18);
+
         // System.out.println(c.giveCoolness(38));
 
         Trash tr = new Trash() {

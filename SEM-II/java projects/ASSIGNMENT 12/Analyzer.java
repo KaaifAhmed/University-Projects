@@ -120,9 +120,9 @@ public class Analyzer {
 
     public static void printMapData(HashMap<String, Double> data) {
         System.out.println("FILTERED DATA:");
-        for (HashMap.Entry<String, Double> entry : data.entrySet()) {
-            String name = entry.getKey();
-            Double sales = entry.getValue();
+        for (String key : data.keySet()) {
+            String name = key;
+            Double sales = data.get(key);
             System.out.println(name + ":\t" + sales);
         }
     }
