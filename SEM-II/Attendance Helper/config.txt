@@ -1,0 +1,5 @@
+# Write in this format
+# className, number of students, attendance directory
+
+BSAI_SEMII, 6, classes/BSAI_SEMII/attendance/
+BSCS_SEMII, 5, classes/BSCS_SEMII/attendance/
