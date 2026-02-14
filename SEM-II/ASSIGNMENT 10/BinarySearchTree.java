@@ -10,7 +10,7 @@ public class BinarySearchTree {
 
         // Read BST from CSV file. CSV is expected to contain one node per
         // line in the form: leftIndex,value,rightIndex
-        int[][] bst = giveBSTFromFile("bst.csv");
+        int[][] bst = giveBSTFromFile("bst.txt");
         String query = "";
 
         // Simple loop until user chooses to quit
@@ -59,12 +59,11 @@ public class BinarySearchTree {
                     printBSTInOrd(bst, 0);
                     Thread.sleep(2000);
                     break;
-                    
+
                 case 5:
                     // Exit loop
                     query = "quit";
                     break;
-
 
                 default:
                     System.out.println("Invalid option! Please choose from 1-3.");
@@ -92,13 +91,13 @@ public class BinarySearchTree {
         // Leaf node (no children)
         if (bst[i][0] == -1 && bst[i][2] == -1) {
             System.out.print(bst[i][1]);
-        } 
+        }
         // No left child, only print node then traverse right
         else if (bst[i][0] == -1 && bst[i][2] != -1) {
             System.out.print(bst[i][1] + " ");
             printBSTInOrd(bst, bst[i][2]);
-        } 
-        
+        }
+
         // Has left child: traverse left, print node, traverse right
         else {
             printBSTInOrd(bst, bst[i][0]);
@@ -152,7 +151,8 @@ public class BinarySearchTree {
         String[] contents = line.split("\n");
         int[][] bst = new int[contents.length][3];
 
-        // Parse each CSV line into the [leftIndex, value, rightIndex] format into the bst array
+        // Parse each CSV line into the [leftIndex, value, rightIndex] format into the
+        // bst array
         for (int i = 0; i < contents.length; i++) {
             String[] temp = (contents[i]).split(",");
             bst[i][0] = Integer.parseInt(temp[0]);
@@ -262,7 +262,8 @@ public class BinarySearchTree {
         }
     }
 
-    // Print the parent nodes data and child nodes data of a target value (if exists)
+    // Print the parent nodes data and child nodes data of a target value (if
+    // exists)
     public static void printChildnParent(int[][] bst, int target) {
         int targInd = findInBST(bst, target, 0);
         if (targInd == -1) {
